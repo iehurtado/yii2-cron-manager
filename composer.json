@@ -1,0 +1,19 @@
+{
+    "name": "gaxz/yii2-cron-manager",
+    "description": "Simple and customizable background task manager module for Yii2 framework",
+    "type": "yii2-extension",
+    "require": {
+        "yii2tech/crontab": "^1.0"
+    },
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Pavel",
+            "email": "jaeden@mail.ru"
+        }
+    ],
+    "autoload": {
+        "classmap": ["src"]
+    },
+    "minimum-stability": "stable"
+}
