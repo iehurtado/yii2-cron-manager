@@ -1,6 +1,6 @@
 <?php
 
-namespace app\gaxz\controllers;
+namespace gaxz\crontab\controllers;
 
 use yii\web\Controller;
 
@@ -9,6 +9,8 @@ use yii\web\Controller;
  */
 class DefaultController extends Controller
 {
+    public $module;
+
     /**
      * Renders the index view for the module
      * @return string

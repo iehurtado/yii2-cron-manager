@@ -2,11 +2,28 @@
 
 namespace gaxz\crontab;
 
+use gaxz\crontab\components\CommandExtractor;
+
 /**
- * crontab-manager module definition class
+ * Crontab manager module class
  */
 class Module extends \yii\base\Module
 {
+    /**
+     * @var string|array Namespaces with classnames of console controllers
+     */
+    public $source;
+
+    /**
+     * @var array Commands excluded from list 
+     */
+    public $excluded = [];
+
+    /**
+     * @var array Custom list of commands
+     */
+    public $commands = [];
+
     /**
      * {@inheritdoc}
      */
@@ -19,6 +36,17 @@ class Module extends \yii\base\Module
     {
         parent::init();
 
-        // custom initialization code goes here
+        if (empty($this->commands)) {
+            $this->getCommandsFromSource();
+        }
+    }
+
+    protected function getCommandsFromSource(): void
+    {
+        $extractor = new CommandExtractor();
+
+        foreach ((array) $this->source as $class) {
+            $this->commands = array_merge($this->commands, $extractor->getCommands($class));
+        }
     }
 }

@@ -13,7 +13,9 @@
         }
     ],
     "autoload": {
-        "classmap": ["src"]
+        "psr-4": {
+            "gaxz\\crontab\\": "src"
+        }
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
