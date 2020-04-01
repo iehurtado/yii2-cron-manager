@@ -11,6 +11,7 @@ class CommandExtractor
 {
     /**
      * Collect commands from controllers
+     * @param string $source
      */
     public function getCommands($source): array
     {
@@ -43,7 +44,7 @@ class CommandExtractor
 
                 $command = $this->hyphenize($class) . "/" . $this->hyphenize($action);
 
-                $commands[$this->normalizeName($command)] = $command;
+                $commands[$command] = $this->normalizeName($command);
             }
         }
 

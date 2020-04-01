@@ -32,9 +32,18 @@ class Module extends \yii\base\Module
     /**
      * {@inheritdoc}
      */
+    public $defaultRoute = 'cron-task';
+
+    /**
+     * {@inheritdoc}
+     */
     public function init()
     {
         parent::init();
+
+        if (\Yii::$app instanceof \yii\console\Application) {
+            $this->controllerNamespace = 'gaxz\crontab\commands';
+        }
 
         if (empty($this->commands)) {
             $this->getCommandsFromSource();
