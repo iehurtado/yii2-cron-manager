@@ -2,7 +2,7 @@
 
 namespace gaxz\crontab;
 
-use gaxz\crontab\components\CommandExtractor;
+use gaxz\crontab\components\RouteExtractor;
 
 /**
  * Crontab manager module class
@@ -15,14 +15,30 @@ class Module extends \yii\base\Module
     public $source;
 
     /**
-     * @var array Commands excluded from list 
+     * @var array Routes excluded from list 
      */
     public $excluded = [];
 
     /**
-     * @var array Custom list of commands
+     * @var array Custom list of routes to console commands
      */
-    public $commands = [];
+    public $routes = [];
+
+    /**
+     * This will work only in case PHP script is running from privileged user (e.g. 'root')
+     * @var string Crontab user to apply
+     */
+    public $defaultUsername;
+
+    /**
+     * @var string Path to yii bootstrap file
+     */
+    public $yiiBootstrapAlias = '@app/yii';
+
+    /**
+     * @var string Path to php binary
+     */
+    public $phpBin = 'php';
 
     /**
      * {@inheritdoc}
@@ -45,17 +61,37 @@ class Module extends \yii\base\Module
             $this->controllerNamespace = 'gaxz\crontab\commands';
         }
 
-        if (empty($this->commands)) {
-            $this->getCommandsFromSource();
+        if (empty($this->routes)) {
+            $this->getRouteFromSource();
         }
     }
 
-    protected function getCommandsFromSource(): void
+    /**
+     * Populate routes from list of sources
+     * @return void
+     */
+    protected function getRouteFromSource(): void
     {
-        $extractor = new CommandExtractor();
+        $extractor = new RouteExtractor();
 
         foreach ((array) $this->source as $class) {
-            $this->commands = array_merge($this->commands, $extractor->getCommands($class));
+            $this->routes = array_merge($this->routes, $extractor->getRoutes($class));
         }
+    }
+
+    /**
+     * @return string Console route to execution script (gaxz\crontab\commands\ExecController)
+     */
+    public function getExecRoute(): string
+    {
+        return "/{$this->id}/exec";
+    }
+
+    /**
+     * Path to yii2 bootstrap file
+     */
+    public function getYiiBootstrap(): string
+    {
+        return \Yii::getAlias($this->yiiBootstrapAlias);
     }
 }

@@ -2,11 +2,9 @@
 
 namespace gaxz\crontab\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
-use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "cron_task".
@@ -15,8 +13,8 @@ use yii\helpers\ArrayHelper;
  * @property string|null $created_at
  * @property string|null $updated_at
  * @property string|null $schedule
- * @property string|null $command
- * @property string|null $options
+ * @property string|null $route
+ * @property string|null $params
  * @property int|null $is_enabled
  */
 class CronTask extends ActiveRecord
@@ -39,10 +37,10 @@ class CronTask extends ActiveRecord
         return [
             [['created_at', 'updated_at'], 'safe'],
             [['is_enabled'], 'integer'],
-            [['options'], 'validateJson'],
-            [['schedule', 'command'], 'string', 'max' => 255],
+            [['params'], 'validateJson'],
+            [['schedule', 'route'], 'string', 'max' => 255],
             [['schedule'], 'match', 'pattern' => self::SCHEDULE_REGEX],
-            [['schedule', 'command'], 'required'],
+            [['schedule', 'route'], 'required'],
         ];
     }
 
@@ -73,12 +71,16 @@ class CronTask extends ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'schedule' => 'Schedule',
-            'command' => 'Command',
-            'options' => 'Options',
+            'route' => 'Route',
+            'params' => 'Params',
             'is_enabled' => 'Is Enabled',
         ];
     }
 
+    /**
+     * @param string $attribute
+     * @return boolean
+     */
     public function validateJson($attribute)
     {
         if (empty($this->$attribute) || json_decode($this->$attribute)) {
@@ -87,5 +89,18 @@ class CronTask extends ActiveRecord
 
         $this->addError($attribute, 'The field must contain a valid JSON string');
         return false;
+    }
+
+    /**
+     * Make crontab line
+     *
+     * @param string $phpBin 
+     * @param string $yiiBootstrap 
+     * @param string $route
+     * @return void
+     */
+    public function getLine($phpBin, $yiiBootstrap, $route)
+    {
+        return "{$this->schedule} {$phpBin} {$yiiBootstrap} {$route} {$this->id}";
     }
 }

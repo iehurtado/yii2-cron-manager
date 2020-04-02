@@ -2,9 +2,12 @@
 
 namespace gaxz\crontab\controllers;
 
+use gaxz\crontab\models\CronLine;
 use Yii;
 use gaxz\crontab\models\CronTask;
 use gaxz\crontab\models\CronTaskSearch;
+use yii2tech\crontab\CronJob;
+use yii2tech\crontab\CronTab;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -43,7 +46,7 @@ class CronTaskController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'commandList' => $this->module->commands,
+            'routesList' => $this->module->routes,
         ]);
     }
 
@@ -57,7 +60,7 @@ class CronTaskController extends Controller
     {
         return $this->render('view', [
             'model' => $this->findModel($id),
-            'commandList' => $this->module->commands,
+            'routesList' => $this->module->routes,
         ]);
     }
 
@@ -71,12 +74,27 @@ class CronTaskController extends Controller
         $model = new CronTask();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            $tab = new CronTab([
+                'jobs' => [
+                    new CronJob([
+                        'line' => $model->getLine(
+                            $this->module->phpBin,
+                            $this->module->getYiiBootstrap(),
+                            $this->module->getExecRoute(),
+                        )
+                    ])
+                ]
+            ]);
+
+            $tab->apply();
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
-            'commandList' => $this->module->commands
+            'routesList' => $this->module->routes
         ]);
     }
 
@@ -97,7 +115,7 @@ class CronTaskController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'commandList' => $this->module->commands,
+            'routesList' => $this->module->routes,
         ]);
     }
 

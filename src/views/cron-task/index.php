@@ -18,7 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a('Create Cron Task', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); 
+    ?>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -30,8 +31,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at',
             'updated_at',
             'schedule',
-            'command',
-            //'is_enabled',
+            'route',
+            'is_enabled:boolean',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

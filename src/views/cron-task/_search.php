@@ -23,9 +23,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'schedule') ?>
 
-    <?= $form->field($model, 'command') ?>
+    <?= $form->field($model, 'route') ?>
 
-    <?php // echo $form->field($model, 'is_enabled') ?>
+    <?php // echo $form->field($model, 'is_enabled') 
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>

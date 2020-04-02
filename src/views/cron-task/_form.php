@@ -17,9 +17,9 @@ Asset::register($this);
 
     <?= $form->field($model, 'schedule')->textInput(['maxlength' => true, 'placeholder' => 'Crontab schedule expression']) ?>
 
-    <?= $form->field($model, 'command')->dropDownList($commandList, ['prompt' => 'Select command']) ?>
+    <?= $form->field($model, 'route')->dropDownList($routesList, ['prompt' => 'Select route']) ?>
 
-    <?= $form->field($model, 'options')->textarea(['rows' => '3', 'placeholder' => 'Must be a valid json string or empty']) ?>
+    <?= $form->field($model, 'params')->textarea(['rows' => '3', 'placeholder' => 'Must be a valid json string or empty']) ?>
 
     <?= $form->field($model, 'is_enabled')->checkbox() ?>
 

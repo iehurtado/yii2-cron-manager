@@ -19,8 +19,8 @@ class m200329_060852_create_cron_task_table extends Migration
             'created_at' => $this->dateTime(),
             'updated_at' => $this->dateTime(),
             'schedule' => $this->string(),
-            'command' => $this->string(),
-            'options' => $this->text(),
+            'route' => $this->string(),
+            'params' => $this->text(),
             'is_enabled' => $this->tinyInteger()
         ]);
     }

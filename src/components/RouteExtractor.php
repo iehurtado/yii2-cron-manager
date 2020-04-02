@@ -5,15 +5,15 @@ namespace gaxz\crontab\components;
 use ReflectionClass;
 
 /**
- * Creates an array of commands from console controller actions
+ * Creates an array of routes from console controller actions
  */
-class CommandExtractor
+class RouteExtractor
 {
     /**
-     * Collect commands from controllers
+     * Collect routes from controllers
      * @param string $source
      */
-    public function getCommands($source): array
+    public function getRoutes($source): array
     {
         return $this->parseMethods($this->getReflection($source));
     }
@@ -27,14 +27,14 @@ class CommandExtractor
     }
 
     /**
-     * Exctract console command strings from class methods 
+     * Exctract routes from class methods and make it absolute
      * @param ReflectionClass $reflection
      */
     public function parseMethods(ReflectionClass $reflection): array
     {
         $class = preg_replace("/Controller$/", '', $reflection->getShortName());
 
-        $commands = [];
+        $routes = [];
 
         foreach ($reflection->getMethods() as $method) {
 
@@ -42,13 +42,13 @@ class CommandExtractor
 
                 $action = preg_replace("/^action/", '', $method->name);
 
-                $command = $this->hyphenize($class) . "/" . $this->hyphenize($action);
+                $route = "/" . $this->hyphenize($class) . "/" . $this->hyphenize($action);
 
-                $commands[$command] = $this->normalizeName($command);
+                $routes[$route] = $this->normalizeName($route);
             }
         }
 
-        return $commands;
+        return $routes;
     }
 
     /**
@@ -63,13 +63,22 @@ class CommandExtractor
     }
 
     /**
-     * Format command name for humans
+     * Format route name for humans
      * @param string $string
      */
     public function normalizeName($string): string
     {
-        $array = explode('-', $string);
+        $array = explode('/', $string);
 
-        return ucfirst(str_replace('/', ': ', implode(' ', $array)));
+        foreach ($array as $key => $value) {
+            if (empty($value)) {
+                unset($array[$key]);
+                continue;
+            }
+
+            $array[$key] = ucfirst($value);
+        }
+
+        return implode(' - ', $array);
     }
 }

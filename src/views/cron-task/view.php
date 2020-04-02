@@ -6,7 +6,7 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model gaxz\crontab\models\CronTask */
 
-$this->title = "ID:{$model->id} ({$model->command})";
+$this->title = "ID:{$model->id} ({$model->route})";
 $this->params['breadcrumbs'][] = ['label' => 'Cron Tasks', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
@@ -33,7 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'created_at',
             'updated_at',
             'schedule',
-            'command',
+            'route',
             'is_enabled',
         ],
     ]) ?>
