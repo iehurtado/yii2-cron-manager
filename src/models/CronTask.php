@@ -78,6 +78,19 @@ class CronTask extends ActiveRecord
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getCronTaskLogs()
+    {
+        return $this->hasMany(CronTaskLog::className(), ['cron_task_id' => 'id']);
+    }
+
+    public function getLatestLog()
+    {
+        return $this->getCronTaskLogs()->orderBy(['created_at' => SORT_DESC])->one();
+    }
+
+    /**
      * @param string $attribute
      * @return boolean
      */
@@ -97,10 +110,10 @@ class CronTask extends ActiveRecord
      * @param string $phpBin 
      * @param string $yiiBootstrap 
      * @param string $route
-     * @return void
+     * @return string
      */
-    public function getLine($phpBin, $yiiBootstrap, $route)
+    public function getLine($phpBin, $yiiBootstrap, $route, $outputSetting): string
     {
-        return "{$this->schedule} {$phpBin} {$yiiBootstrap} {$route} {$this->id}";
+        return "{$this->schedule} {$phpBin} {$yiiBootstrap} {$route} {$this->id} {$outputSetting}";
     }
 }

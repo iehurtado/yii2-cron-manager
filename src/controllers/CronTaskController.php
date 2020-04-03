@@ -6,6 +6,7 @@ use gaxz\crontab\models\CronLine;
 use Yii;
 use gaxz\crontab\models\CronTask;
 use gaxz\crontab\models\CronTaskSearch;
+use Symfony\Component\Process\PhpExecutableFinder;
 use yii2tech\crontab\CronJob;
 use yii2tech\crontab\CronTab;
 use yii\web\Controller;
@@ -17,6 +18,9 @@ use yii\filters\VerbFilter;
  */
 class CronTaskController extends Controller
 {
+    /**
+     * @var \gaxz\crontab\Module
+     */
     public $module;
 
     /**
@@ -75,19 +79,13 @@ class CronTaskController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            $tab = new CronTab([
-                'jobs' => [
-                    new CronJob([
-                        'line' => $model->getLine(
-                            $this->module->phpBin,
-                            $this->module->getYiiBootstrap(),
-                            $this->module->getExecRoute(),
-                        )
-                    ])
-                ]
-            ]);
+            if ($model->is_enabled) {
+                $cronJob = $this->createCronJob($model);
 
-            $tab->apply();
+                $this->getCrontab()
+                    ->setJobs([$cronJob])
+                    ->apply();
+            }
 
             return $this->redirect(['view', 'id' => $model->id]);
         }
@@ -147,5 +145,36 @@ class CronTaskController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    /**
+     * Get crontab instance
+     */
+    protected function getCrontab(): CronTab
+    {
+        $crontab = new CronTab();
+        $crontab->headLines = $this->module->getCrontabHeader();
+
+        if (!empty($this->module->username)) {
+            $crontab->username = $this->module->crontabUsername;
+        }
+
+        return $crontab;
+    }
+
+    /**
+     * Transform CronTask to CronJob
+     * @param CronTask $model
+     */
+    protected function createCronJob(CronTask $model): CronJob
+    {
+        return new CronJob([
+            'line' => $model->getLine(
+                $this->module->phpBin,
+                $this->module->getYiiBootstrap(),
+                $this->module->getExecRoute(),
+                $this->module->outputSetting,
+            )
+        ]);
     }
 }
