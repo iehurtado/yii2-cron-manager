@@ -12,6 +12,7 @@ class RouteExtractor
     /**
      * Collect routes from controllers
      * @param string $source
+     * @return array
      */
     public function getRoutes($source): array
     {
@@ -20,6 +21,7 @@ class RouteExtractor
 
     /**
      * @param string $className
+     * @return ReflectionClass
      */
     public function getReflection($className): Reflectionclass
     {
@@ -29,6 +31,7 @@ class RouteExtractor
     /**
      * Exctract routes from class methods and make it absolute
      * @param ReflectionClass $reflection
+     * @return array
      */
     public function parseMethods(ReflectionClass $reflection): array
     {
@@ -54,6 +57,7 @@ class RouteExtractor
     /**
      * Split string by capital letters and concatinate with hyphens
      * @param string $string
+     * @return string
      */
     public function hyphenize($string): string
     {
@@ -65,6 +69,7 @@ class RouteExtractor
     /**
      * Format route name for humans
      * @param string $string
+     * @return string
      */
     public function normalizeName($string): string
     {

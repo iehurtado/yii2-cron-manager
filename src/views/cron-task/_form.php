@@ -1,10 +1,7 @@
 <?php
 
-use gaxz\crontab\Asset;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-
-Asset::register($this);
 
 /* @var $this yii\web\View */
 /* @var $model gaxz\crontab\models\CronTask */
@@ -20,8 +17,6 @@ Asset::register($this);
     <?= $form->field($model, 'route')->dropDownList($routesList, ['prompt' => 'Select route']) ?>
 
     <?= $form->field($model, 'params')->textarea(['rows' => '3', 'placeholder' => 'Must be a valid json string or empty']) ?>
-
-    <?= $form->field($model, 'is_enabled')->checkbox() ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

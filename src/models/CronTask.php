@@ -19,6 +19,9 @@ use yii\db\ActiveRecord;
  */
 class CronTask extends ActiveRecord
 {
+    /**
+     * @var SCHEDULE_REGEX Regular expression of cron schedule
+     */
     const SCHEDULE_REGEX = "/^((?:[1-9]?\d|\*)\s*(?:(?:[\/-][1-9]?\d)|(?:,[1-9]?\d)+)?\s*){5}$/";
 
     /**
@@ -85,6 +88,10 @@ class CronTask extends ActiveRecord
         return $this->hasMany(CronTaskLog::className(), ['cron_task_id' => 'id']);
     }
 
+    /**
+     * Takes ActiveQuery of CronTaskLogs and filters latest log
+     * {@inheritdoc}
+     */
     public function getLatestLog()
     {
         return $this->getCronTaskLogs()->orderBy(['created_at' => SORT_DESC])->one();

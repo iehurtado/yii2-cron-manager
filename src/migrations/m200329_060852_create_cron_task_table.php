@@ -21,7 +21,7 @@ class m200329_060852_create_cron_task_table extends Migration
             'schedule' => $this->string(),
             'route' => $this->string(),
             'params' => $this->text(),
-            'is_enabled' => $this->tinyInteger()
+            'is_enabled' => $this->tinyInteger()->defaultValue(0)
         ]);
     }
 

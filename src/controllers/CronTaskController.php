@@ -2,11 +2,10 @@
 
 namespace gaxz\crontab\controllers;
 
-use gaxz\crontab\models\CronLine;
 use Yii;
 use gaxz\crontab\models\CronTask;
+use gaxz\crontab\models\CronTaskLogSearch;
 use gaxz\crontab\models\CronTaskSearch;
-use Symfony\Component\Process\PhpExecutableFinder;
 use yii2tech\crontab\CronJob;
 use yii2tech\crontab\CronTab;
 use yii\web\Controller;
@@ -62,8 +61,13 @@ class CronTaskController extends Controller
      */
     public function actionView($id)
     {
+        $logSearchModel = new CronTaskLogSearch(['cron_task_id' => $id]);
+        $logDataProvider = $logSearchModel->search(Yii::$app->request->queryParams);
+
         return $this->render('view', [
             'model' => $this->findModel($id),
+            'logDataProvider' => $logDataProvider,
+            'logSearchModel' => $logSearchModel,
             'routesList' => $this->module->routes,
         ]);
     }
@@ -79,14 +83,6 @@ class CronTaskController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
 
-            if ($model->is_enabled) {
-                $cronJob = $this->createCronJob($model);
-
-                $this->getCrontab()
-                    ->setJobs([$cronJob])
-                    ->apply();
-            }
-
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -98,7 +94,7 @@ class CronTaskController extends Controller
 
     /**
      * Updates an existing CronTask model.
-     * If update is successful, the browser will be redirected to the 'view' page.
+     * If update is successful and model is enabled, removes old task and replaces with a new one.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -106,8 +102,21 @@ class CronTaskController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $crontab = $this->getCrontab();
+        $oldCronJob = $this->createCronJob($model);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+            if ($model->is_enabled) {
+                $crontab->setJobs([$oldCronJob]);
+                $crontab->remove();
+
+                $crontab->setJobs([$this->createCronJob($model)]);
+                $crontab->apply();
+
+                Yii::$app->session->setFlash('success', 'Crontab has been updated');
+            }
+
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
@@ -119,16 +128,68 @@ class CronTaskController extends Controller
 
     /**
      * Deletes an existing CronTask model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
+     * If deletion is successful, removes the line from crontab.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $model = $this->findModel($id);
+        $crontab = $this->getCrontab();
+        $cronJob = $this->createCronJob($model);
+
+        if ($model->delete()) {
+            $crontab->setJobs([$cronJob])->remove();
+            \Yii::$app->session->setFlash('success', 'Crontab has been updated');
+        } else {
+            \Yii::$app->session->setFlash('error', 'Unable to delete CronTask');
+        }
 
         return $this->redirect(['index']);
+    }
+
+    /**
+     * Updates is_enabled attribute and crontab file
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionChangeStatus($id)
+    {
+        $model = $this->findModel($id);
+
+        $model->is_enabled = $model->is_enabled ? 0 : 1;
+
+        if (!$model->save(false)) {
+            \Yii::$app->session->setFlash('error', 'Unable to update status');
+        }
+
+        $cronJob = $this->createCronJob($model);
+        $crontab = $this->getCrontab()->setJobs([$cronJob]);
+
+        if ($model->is_enabled) {
+            $crontab->apply();
+        } else {
+            $crontab->remove();
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?: Yii::$app->homeUrl);
+    }
+
+    /**
+     * Runs CronTask execution in console and redirects to view page
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionExecute($id)
+    {
+        $model = $this->findModel($id);
+
+        $cronJob = $this->createCronJob($model);
+
+        shell_exec(escapeshellcmd($cronJob->command));
+
+        $this->redirect(['view', 'id' => $id]);
     }
 
     /**
@@ -148,7 +209,8 @@ class CronTaskController extends Controller
     }
 
     /**
-     * Get crontab instance
+     * Creates crontab instance
+     * @return CronTab
      */
     protected function getCrontab(): CronTab
     {
@@ -163,8 +225,9 @@ class CronTaskController extends Controller
     }
 
     /**
-     * Transform CronTask to CronJob
+     * Transform CronTask to CronJob using module settings
      * @param CronTask $model
+     * @return CronJob
      */
     protected function createCronJob(CronTask $model): CronJob
     {
