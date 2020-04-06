@@ -50,7 +50,7 @@ class Module extends \yii\base\Module
     /**
      * @var string Path to yii bootstrap file
      */
-    public $yiiBootstrapAlias = '@app/yii';
+    public $yiiBootstrapAlias = '@vendor/../yii';
 
     /**
      * @var string Path to php binary

@@ -1,4 +1,3 @@
-
 # Cron Manager module for Yii2 framework
 This is a simple and flexible module for creating\updating background tasks of cron application. It is designed to work with yii2 console controllers and description provides some advice to work with them. 
 
@@ -20,6 +19,11 @@ Add the code below to your web and console config files:
 	    	'class' => 'gaxz\crontab\Module'
 	    ],
     ]
+And finally
+
+    php yii migrate --migrationNamespaces=gaxz\\crontab\\migrations
+
+Also make sure that cron is installed and running.
 
 # Configuration
 Module requires a list of routes to yii2 console controllers. 
@@ -74,10 +78,16 @@ It is important to use PHP_EOL to write readable output to logs. Also module is 
 **You don't need to try-catch exceptions since module is doing it by itself.** 
 This will form readable logs that are comfortable to support and search through.
 
+Will be useful to check crontab file of php user to check if everything works correctly.
+
+    crontab -e -u www-data
+
 # Advanced configuration
+**Warning! Before you update settings that change crontab line 
+(e.g phpBin, yiiBootstrapAlias, outputSetting), disable all of your active cron tasks.**   
 
 **Duplicating output to a file or STDOUT\STDERR:**
-Example:
+
 
     'modules' => [
 	    'crontab' => [
@@ -101,3 +111,11 @@ will form:
         'SHELL=/bin/sh',
         'PATH=/usr/bin:/usr/sbin',
     ],
+
+**Setting crontab username**
+*This will work only in case PHP script is running from privileged user (e.g. 'root')*
+
+    'crontabUsername' => 'www-data',
+**Setting path to yii bootstrap file**
+
+    'yiiBootstrapAlias' => '@app/yii'
