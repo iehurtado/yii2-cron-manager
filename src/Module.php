@@ -3,6 +3,7 @@
 namespace gaxz\crontab;
 
 use gaxz\crontab\components\RouteExtractor;
+use yii2tech\crontab\CronTab;
 
 /**
  * Crontab manager module
@@ -60,7 +61,7 @@ class Module extends \yii\base\Module
 
     /**
      * Crontab header message to merge with $headlines
-     * @see Crontab::$headLines
+     * @see Crontab $headLines
      * @var array
      */
     public $headerMessage = [
@@ -70,7 +71,7 @@ class Module extends \yii\base\Module
 
     /**
      * Crontab settings that will appear after $headerMessage
-     * @see Crontab::$headLines
+     * @see Crontab $headLines
      * @var array
      */
     public $headLines = [];

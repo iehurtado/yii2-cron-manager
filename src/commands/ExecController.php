@@ -20,7 +20,7 @@ class ExecController extends Controller
     /**
      * This method takes a CronTask::$id as a parameter finds a model and runs a controller action.
      * Each run is being logged to database via CronTaskLog model or if it's set, sending it to console output.
-     * Console output may be handled 
+     * Console output may be handled
      * @see \gaxz\crontab\Module $outputSetting
      *   
      * @param integer $id CronTask::$id
