@@ -4,6 +4,7 @@
     "keywords": ["cron", "crontab", "yii2", "background", "tasks", "manager", "module"],
     "type": "yii2-extension",
     "require": {
+        "yiisoft/yii2": "~2.0.0",
         "yii2tech/crontab": "^1.0"
     },
     "license": "BSD-3-Clause",
