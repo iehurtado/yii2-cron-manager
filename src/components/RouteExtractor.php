@@ -2,44 +2,25 @@
 
 namespace gaxz\crontab\components;
 
-use ReflectionClass;
-
 /**
  * Creates an array of routes from console controller actions
+ * @example: 
+ * $extractor = new RouteExtractor($classname);
+ * $extractor->getRoutes();
  */
-class RouteExtractor
+class RouteExtractor extends \ReflectionClass
 {
     /**
-     * Collect routes from controllers
-     * @param string $source
+     * Exctract routes from class methods and make them absolute
      * @return array
      */
-    public function getRoutes($source): array
+    public function getRoutes(): array
     {
-        return $this->parseMethods($this->getReflection($source));
-    }
-
-    /**
-     * @param string $className
-     * @return ReflectionClass
-     */
-    public function getReflection($className): Reflectionclass
-    {
-        return new ReflectionClass($className);
-    }
-
-    /**
-     * Exctract routes from class methods and make it absolute
-     * @param ReflectionClass $reflection
-     * @return array
-     */
-    public function parseMethods(ReflectionClass $reflection): array
-    {
-        $class = preg_replace("/Controller$/", '', $reflection->getShortName());
+        $class = preg_replace("/Controller$/", '', $this->getShortName());
 
         $routes = [];
 
-        foreach ($reflection->getMethods() as $method) {
+        foreach ($this->getMethods() as $method) {
 
             if (preg_match("/^action[0-9A-Z]/", $method->name)) {
 

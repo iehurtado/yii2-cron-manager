@@ -109,10 +109,9 @@ class Module extends \yii\base\Module
      */
     protected function getRouteFromSource(): void
     {
-        $extractor = new RouteExtractor();
-
         foreach ((array) $this->source as $class) {
-            $this->routes = array_merge($this->routes, $extractor->getRoutes($class));
+            $extractor = new RouteExtractor($class);
+            $this->routes = array_merge($this->routes, $extractor->getRoutes());
         }
     }
 
