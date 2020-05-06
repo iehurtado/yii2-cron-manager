@@ -23,6 +23,8 @@ And finally
 
     php yii migrate --migrationNamespaces=gaxz\\crontab\\migrations
 
+To apply migrations via docker you might need to replace double backslashes with single e.g: --migrationNamespaces=gaxz\crontab\migrations.
+
 Also make sure that cron is installed and running.
 
 # Configuration
