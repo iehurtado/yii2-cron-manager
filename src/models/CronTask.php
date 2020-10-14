@@ -38,10 +38,12 @@ class CronTask extends ActiveRecord
     public function rules()
     {
         return [
+            [['name'], 'string', 'max' => 50],
+            [['name', 'description'], 'default', 'value' => null],
             [['created_at', 'updated_at'], 'safe'],
             [['is_enabled'], 'integer'],
             [['params'], 'validateJson'],
-            [['schedule', 'route'], 'string', 'max' => 255],
+            [['schedule', 'route', 'description'], 'string', 'max' => 255],
             [['schedule'], 'match', 'pattern' => self::SCHEDULE_REGEX],
             [['schedule', 'route'], 'required'],
         ];
@@ -71,6 +73,8 @@ class CronTask extends ActiveRecord
     {
         return [
             'id' => 'ID',
+            'name' => 'Name',
+            'description' => 'Description',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'schedule' => 'Schedule',
