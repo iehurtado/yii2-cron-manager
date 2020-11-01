@@ -127,4 +127,13 @@ class CronTask extends ActiveRecord
     {
         return "{$this->schedule} {$phpBin} {$yiiBootstrap} {$route} {$this->id} {$outputSetting}";
     }
+
+    public function getPrettyName()
+    {
+        if (empty($this->name)) {
+            return "ID: {$this->id} ({$this->route})";
+        }
+
+        return "ID: {$this->id} - {$this->name}";
+    }
 }
