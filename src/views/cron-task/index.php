@@ -33,16 +33,17 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
                 [
                     'attribute' => 'name',
-                    'headerOptions' => ['style' => 'width:14%']
+                    'headerOptions' => ['style' => 'width:10%']
                 ],
                 [
-                    'attribute' => 'description'
+                    'attribute' => 'description',
+                    'headerOptions' => ['style' => 'width:20%']
                 ],
                 [
                     'attribute' => 'updated_at',
                     'format' => 'datetime',
                     'filter' => false,
-                    'headerOptions' => ['style' => 'width:14%'],
+                    'headerOptions' => ['style' => 'width:10%'],
                 ],
                 [
                     'attribute' => 'schedule',
