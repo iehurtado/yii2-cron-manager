@@ -3,8 +3,10 @@
 namespace gaxz\crontab\models;
 
 use yii\behaviors\TimestampBehavior;
+use yii\console\ExitCode;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+use gaxz\crontab\Module;
 
 /**
  * This is the model class for table "cron_task".
@@ -72,15 +74,15 @@ class CronTask extends ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'description' => 'Description',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-            'schedule' => 'Schedule',
-            'route' => 'Route',
-            'params' => 'Params',
-            'is_enabled' => 'Is Enabled',
+            'id' => Module::t('model', 'ID'),
+            'name' => Module::t('model', 'Name'),
+            'description' => Module::t('model', 'Description'),
+            'created_at' => Module::t('model', 'Created At'),
+            'updated_at' => Module::t('model', 'Updated At'),
+            'schedule' => Module::t('model', 'Schedule'),
+            'route' => Module::t('model', 'Route'),
+            'params' => Module::t('model', 'Params'),
+            'is_enabled' => Module::t('model', 'Is Enabled'),
         ];
     }
 
@@ -100,7 +102,7 @@ class CronTask extends ActiveRecord
     {
         return $this->getCronTaskLogs()->orderBy(['created_at' => SORT_DESC])->one();
     }
-
+    
     /**
      * @param string $attribute
      * @return boolean

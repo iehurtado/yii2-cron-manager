@@ -2,8 +2,11 @@
 
 namespace gaxz\crontab;
 
-use gaxz\crontab\components\RouteExtractor;
+use Yii;
 use yii2tech\crontab\CronTab;
+use gaxz\crontab\components\RouteExtractor;
+use gaxz\crontab\behaviors\ExitCodeFormatBehavior;
+use gaxz\crontab\behaviors\StatusFormatBehavior;
 
 /**
  * Crontab manager module
@@ -101,6 +104,9 @@ class Module extends \yii\base\Module
         if (empty($this->routes)) {
             $this->getRouteFromSource();
         }
+        
+        $this->registerFormatters();
+        $this->registerTranslations();
     }
 
     /**
@@ -142,4 +148,32 @@ class Module extends \yii\base\Module
     {
         return array_merge($this->headerMessage, $this->headLines);
     }
+    
+    public function registerFormatters()
+    {
+        Yii::$app->formatter->attachBehaviors([
+            'exitcodeFormat' => ExitCodeFormatBehavior::class,
+            'statusFormat' => StatusFormatBehavior::class
+        ]);
+    }
+    
+    public function registerTranslations()
+    {
+        Yii::$app->i18n->translations['modules/crontab/*'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'sourceLanguage' => 'en-US',
+            'basePath' => '@gaxz/crontab/messages',
+            'fileMap' => [
+                'modules/crontab/main' => 'main.php',
+                'modules/crontab/form' => 'form.php',
+                'modules/crontab/model' => 'model.php',
+            ]
+        ];
+    }
+    
+    public static function t($category, $message, $params = [], $language = null)
+    {
+        return Yii::t('modules/crontab/' . $category, $message, $params, $language);
+    }
+    
 }

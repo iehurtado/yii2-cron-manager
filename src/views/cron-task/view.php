@@ -5,13 +5,14 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
+use gaxz\crontab\Module;
 
 /* @var $this yii\web\View */
 /* @var $model gaxz\crontab\models\CronTask */
 
 $this->title = $model->getPrettyName();
     
-$this->params['breadcrumbs'][] = ['label' => 'Cron Tasks', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Cron Tasks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cron-task-view">
@@ -20,13 +21,15 @@ $this->params['breadcrumbs'][] = $this->title;
         
     <p>
 
-        <?= Html::a('Execute', ['execute', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a($model->is_enabled ? 'Stop' : 'Enable', ['change-status', 'id' => $model->id], ['class' => 'btn btn-warning']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a(Module::t('main', 'Execute'), ['execute', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Module::t('main', 'Update'), ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a(Module::t('main', ($model->is_enabled ? 'Stop' : 'Enable')), ['change-status', 'id' => $model->id], [
+            'class' => 'btn btn-warning'
+        ]) ?>
+        <?= Html::a(Module::t('main', 'Delete'), ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => Module::t('main', 'Are you sure you want to delete this item?'),
                 'method' => 'post',
             ],
         ]) ?>
@@ -38,8 +41,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'description',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
             'schedule',
             'route',
             'is_enabled:boolean',
@@ -54,13 +57,11 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $logSearchModel,
         'columns' => [
             'id',
-            'created_at',
+            'created_at:datetime',
             'output:ntext',
             [
                 'attribute' => 'exit_code',
-                'value' => function ($model) {
-                    return ExitCode::getReason($model->exit_code);
-                },
+                'format' => 'exitcode',
                 'filter' => ExitCode::$reasons
             ],
             [
@@ -69,7 +70,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a(
-                            '<span class="glyphicon glyphicon-eye-open" title="View" aria-hidden="true"></span>',
+                            Html::tag('span', '', [
+                                'class' => 'glyphicon glyphicon-eye-open',
+                                'title' => Module::t('main', 'View'),
+                                'aria' => ['hidden' => true]
+                            ]),
                             Url::to(['cron-task-log/view', 'id' => $model->id])
                         );
                     }

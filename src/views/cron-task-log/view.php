@@ -20,7 +20,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'created_at',
+            'created_at:datetime',
             [
                 'attribute' => 'cron_task_id',
                 'format' => 'raw',
@@ -33,12 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             'output:ntext',
-            [
-                'attribute' => 'exit_code',
-                'value' => function ($model) {
-                    return ExitCode::getReason($model->exit_code);
-                },
-            ],
+            'exit_code:exitcode'
         ],
     ]) ?>
 

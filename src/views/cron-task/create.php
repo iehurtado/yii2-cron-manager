@@ -1,12 +1,13 @@
 <?php
 
 use yii\helpers\Html;
+use gaxz\crontab\Module;
 
 /* @var $this yii\web\View */
 /* @var $model gaxz\crontab\models\CronTask */
 
-$this->title = 'Create Cron Task';
-$this->params['breadcrumbs'][] = ['label' => 'Cron Tasks', 'url' => ['index']];
+$this->title = Module::t('main', 'Create Cron Task');
+$this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Cron Tasks'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cron-task-create">

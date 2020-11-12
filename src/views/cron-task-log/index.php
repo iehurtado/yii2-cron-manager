@@ -4,20 +4,21 @@ use yii\console\ExitCode;
 use yii\helpers\Html;
 use yii\grid\GridView;
 use yii\helpers\Url;
+use gaxz\crontab\Module;
 
 /* @var $this yii\web\View */
 /* @var $searchModel gaxz\crontab\models\CronTaskLogSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Cron Task Logs';
-$this->params['breadcrumbs'][] = ['label' => 'Cron Tasks', 'url' => ['cron-task/index']];
+$this->title = Module::t('main', 'Cron Task Logs');
+$this->params['breadcrumbs'][] = ['label' => Module::t('main', 'Cron Tasks'), 'url' => ['cron-task/index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cron-task-log-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
     <p>
-        <?= Html::a('Cron Tasks', ['cron-task/index'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a(Module::t('main', 'Cron Tasks'), ['cron-task/index'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?= GridView::widget([
@@ -28,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'created_at',
                 'headerOptions' => ['style' => 'width:14%'],
+                'format' => 'datetime'
             ],
             [
                 'attribute' => 'cron_task_id',
@@ -47,9 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'exit_code',
-                'value' => function ($model) {
-                    return ExitCode::getReason($model->exit_code);
-                },
+                'format' => 'exitcode',
                 'filter' => ExitCode::$reasons
             ],
             [
@@ -58,7 +58,11 @@ $this->params['breadcrumbs'][] = $this->title;
                 'buttons' => [
                     'view' => function ($url, $model, $key) {
                         return Html::a(
-                            '<span class="glyphicon glyphicon-eye-open" title="View" aria-hidden="true"></span>',
+                            Html::tag('span', '', [
+                                'class' => 'glyphicon glyphicon-eye-open',
+                                'title' => Module::t('main', 'View'),
+                                'aria' => ['hidden' => true]
+                            ]),
                             Url::to(['cron-task-log/view', 'id' => $model->id])
                         );
                     }

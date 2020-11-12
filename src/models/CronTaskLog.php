@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\Expression;
 use yii\db\ActiveRecord;
+use gaxz\crontab\Module;
 
 /**
  * This is the model class for table "cron_task_log".
@@ -63,11 +64,11 @@ class CronTaskLog extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'created_at' => 'Created At',
-            'cron_task_id' => 'Cron Task ID',
-            'output' => 'Output',
-            'exit_code' => 'Exit Code',
+            'id' => Module::t('model', 'ID'),
+            'created_at' => Module::t('model', 'Executed At'),
+            'cron_task_id' => Module::t('model', 'Cron Task ID'),
+            'output' => Module::t('model', 'Output'),
+            'exit_code' => Module::t('model', 'Exit Code'),
         ];
     }
 
